@@ -1,5 +1,6 @@
 # Tamizhan-skills-Project-1-8-Solved
-# Email Spam Detection using Naive Bayes
+#Project 1
+# Project 1- Email Spam Detection using Naive Bayes
 
 # Import necessary libraries
 import pandas as pd
@@ -40,3 +41,5 @@ print("Accuracy:", accuracy_score(y_test, y_pred)*100)
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
+![image](https://github.com/user-attachments/assets/8dc3379d-f2a5-42b3-b203-1765fbbba99a)
+
