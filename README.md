@@ -258,8 +258,79 @@ recommend_movies = top_user_movies[~top_user_movies['movie'].isin(user_movies)]
 recommend_movies = recommend_movies.sort_values(by='rating', ascending=False)
 
 print("\nRecommended Movies for User", user_id, ":\n", recommend_movies[['movie', 'rating']])
-
 Output:
+
 ![image](https://github.com/user-attachments/assets/1bebd512-08dc-4127-8dca-dc1f4e749beb)
 ![image](https://github.com/user-attachments/assets/f91a2cb6-a855-44be-a7c3-d0136659e360)
+
+Project 6: Stock Price Prediction using LSTM 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+import yfinance as yf
+
+# Step 1: Load Stock Price Data (Example: Apple 'AAPL')
+df = yf.download('AAPL', start='2018-01-01', end='2023-01-01')
+
+print("Stock Data Sample:\n", df.head())
+
+# Step 2: Use 'Close' price for prediction
+data = df[['Close']].values
+
+# Step 3: Normalize data (0 to 1)
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_data = scaler.fit_transform(data)
+
+# Step 4: Prepare training data (60 timesteps)
+train_size = int(len(scaled_data) * 0.8)
+train_data = scaled_data[:train_size]
+test_data = scaled_data[train_size - 60:]
+
+def create_dataset(data, time_step=60):
+    X, Y = [], []
+    for i in range(time_step, len(data)):
+        X.append(data[i-time_step:i, 0])
+        Y.append(data[i, 0])
+    return np.array(X), np.array(Y)
+
+X_train, y_train = create_dataset(train_data)
+X_test, y_test = create_dataset(test_data)
+
+# Reshape for LSTM [samples, time steps, features]
+X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
+X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+
+# Step 5: Build LSTM Model
+model = Sequential([
+    LSTM(50, return_sequences=True, input_shape=(X_train.shape[1], 1)),
+    LSTM(50, return_sequences=False),
+    Dense(25),
+    Dense(1)
+])
+
+# Step 6: Compile and train
+model.compile(optimizer='adam', loss='mean_squared_error')
+model.fit(X_train, y_train, epochs=5, batch_size=64, verbose=1)
+
+# Step 7: Predict and inverse transform to original scale
+predictions = model.predict(X_test)
+predictions = scaler.inverse_transform(predictions)
+y_test_scaled = scaler.inverse_transform(y_test.reshape(-1, 1))
+
+# Step 8: Plot Actual vs Predicted Prices
+plt.figure(figsize=(10,6))
+plt.plot(y_test_scaled, label='Actual Price')
+plt.plot(predictions, label='Predicted Price')
+plt.title('Stock Price Prediction')
+plt.xlabel('Time')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
+
+Output:
+![image](https://github.com/user-attachments/assets/e5ce4946-8f35-455c-8186-f62562ce666f)
+![image](https://github.com/user-attachments/assets/a0bea1c4-6e95-42b3-bb84-d87b0d921f76)
 
