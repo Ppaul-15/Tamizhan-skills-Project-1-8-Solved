@@ -174,3 +174,92 @@ Output:
 ![image](https://github.com/user-attachments/assets/b4f4f866-4a8e-4108-8355-dafb272e286b)
 ![image](https://github.com/user-attachments/assets/88522ee3-928e-4cc8-8187-5d031e5792c2)
 
+Project-4:Fake News Detection (Using Scikit-learn Built-in Dataset)
+
+# Project 4: Fake News Detection (Using Scikit-learn Built-in Dataset)
+
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import PassiveAggressiveClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classification_report
+
+# Step 1: Load built-in dataset (2 categories only to simulate fake vs real)
+categories = ['sci.space', 'talk.politics.misc']  # Space (Real) vs Politics (Fake for simulation)
+news = fetch_20newsgroups(subset='all', categories=categories, remove=('headers', 'footers', 'quotes'))
+
+X = news.data  # Text data
+y = news.target  # Labels (0 or 1)
+
+# Step 2: Train/Test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 3: TF-IDF Vectorization
+tfidf = TfidfVectorizer(stop_words='english', max_df=0.7)
+X_train_tfidf = tfidf.fit_transform(X_train)
+X_test_tfidf = tfidf.transform(X_test)
+
+# Step 4: Model Training (Passive Aggressive Classifier)
+model = PassiveAggressiveClassifier(max_iter=50, random_state=42)
+model.fit(X_train_tfidf, y_train)
+
+# Step 5: Predictions
+y_pred = model.predict(X_test_tfidf)
+
+# Step 6: Evaluation
+print("Accuracy:", accuracy_score(y_test, y_pred)*100)
+print("F1 Score:", f1_score(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
+Output:
+
+![image](https://github.com/user-attachments/assets/b8025e83-0967-4283-a552-31f4b9ce7db0)
+
+Project-5 Movie recommendation System
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import LabelEncoder
+
+# Sample MovieLens-like dataset manually created for demonstration (since direct URLs fail)
+data = {
+    'user_id': [1, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+    'movie': ['Avengers', 'Titanic', 'Gladiator', 'Avengers', 'Gladiator',
+              'Titanic', 'Gladiator', 'Avengers', 'Titanic', 'Gladiator'],
+    'rating': [5, 4, 3, 5, 4, 5, 4, 3, 5, 4]
+}
+
+df = pd.DataFrame(data)
+print("Sample Data:\n", df)
+
+# Pivot to create User-Item matrix
+user_movie_matrix = df.pivot_table(index='user_id', columns='movie', values='rating').fillna(0)
+print("\nUser-Movie Matrix:\n", user_movie_matrix)
+
+# Compute cosine similarity between users
+user_similarity = cosine_similarity(user_movie_matrix)
+print("\nUser Similarity Matrix:\n", user_similarity)
+
+# Recommend movies for User 1
+user_id = 1
+similar_users = list(enumerate(user_similarity[user_id - 1]))
+similar_users = sorted(similar_users, key=lambda x: x[1], reverse=True)
+
+print("\nTop similar users to User", user_id, ":", similar_users[1:])
+
+# Find movies rated by the most similar user but not rated by User 1
+top_user = similar_users[1][0] + 1
+user_movies = df[df.user_id == user_id]['movie'].tolist()
+top_user_movies = df[df.user_id == top_user]
+
+# Recommend unseen movies
+recommend_movies = top_user_movies[~top_user_movies['movie'].isin(user_movies)]
+recommend_movies = recommend_movies.sort_values(by='rating', ascending=False)
+
+print("\nRecommended Movies for User", user_id, ":\n", recommend_movies[['movie', 'rating']])
+
+Output:
+![image](https://github.com/user-attachments/assets/1bebd512-08dc-4127-8dca-dc1f4e749beb)
+![image](https://github.com/user-attachments/assets/f91a2cb6-a855-44be-a7c3-d0136659e360)
+
