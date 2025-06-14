@@ -264,6 +264,8 @@ Output:
 ![image](https://github.com/user-attachments/assets/f91a2cb6-a855-44be-a7c3-d0136659e360)
 
 Project 6: Stock Price Prediction using LSTM 
+# Stock Price Prediction using LSTM 
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
