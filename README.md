@@ -96,3 +96,81 @@ test_loss, test_acc = model.evaluate(X_test, y_test, verbose=2)
 print("\nTest Accuracy:", test_acc*100)
 Ouput: 
 ![image](https://github.com/user-attachments/assets/fb13f3c6-e51d-48ca-acd6-6286203c0c03)
+
+Project -3  Loan Eligibility Predictor
+
+# Loan Eligibility Predictor
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
+
+# Step 1: Load dataset
+url = "https://raw.githubusercontent.com/shrikant-temburwar/Loan-Prediction-Dataset/master/train.csv"
+data = pd.read_csv(url)
+
+# Step 2: Drop unnecessary columns
+data.drop('Loan_ID', axis=1, inplace=True)
+
+# Step 3: Handle missing values
+for col in data.columns:
+    if data[col].dtype == 'object':
+        data[col].fillna(data[col].mode()[0], inplace=True)
+    else:
+        data[col].fillna(data[col].median(), inplace=True)
+
+# Step 4: Encode categorical variables
+le = LabelEncoder()
+for col in data.select_dtypes(include=['object']).columns:
+    data[col] = le.fit_transform(data[col])
+
+# Step 5: Split dataset into features and target
+X = data.drop('Loan_Status', axis=1)
+y = data['Loan_Status']
+
+# Step 6: Train-Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 7: Feature Scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Step 8: Train Model (Random Forest or Logistic Regression)
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+# model = LogisticRegression()   # You can switch here if you want Logistic Regression
+
+model.fit(X_train, y_train)
+
+# Step 9: Predictions
+y_pred = model.predict(X_test)
+y_proba = model.predict_proba(X_test)[:, 1]  # For ROC AUC
+
+# Step 10: Evaluation Metrics
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# ROC Curve
+fpr, tpr, thresholds = roc_curve(y_test, y_proba)
+roc_auc = roc_auc_score(y_test, y_proba)
+
+plt.figure(figsize=(6,4))
+plt.plot(fpr, tpr, label=f'ROC Curve (AUC = {roc_auc:.2f})', color='blue')
+plt.plot([0, 1], [0, 1], 'k--')  # Random classifier line
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve')
+plt.legend(loc='lower right')
+plt.grid()
+plt.show()
+
+Output:
+
+![image](https://github.com/user-attachments/assets/b4f4f866-4a8e-4108-8355-dafb272e286b)
+![image](https://github.com/user-attachments/assets/88522ee3-928e-4cc8-8187-5d031e5792c2)
+
