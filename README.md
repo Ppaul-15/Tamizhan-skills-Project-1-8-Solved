@@ -1,5 +1,4 @@
-# Tamizhan-skills-Project-1-8-Solved
-#Project 1
+# Tamizhan-skills-Project-1-8-Solved 
 # Project 1- Email Spam Detection using Naive Bayes
 
 # Import necessary libraries
@@ -41,11 +40,11 @@ print("Accuracy:", accuracy_score(y_test, y_pred)*100)
 print("Precision:", precision_score(y_test, y_pred))
 print("Recall:", recall_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# OUTPUT
 ![image](https://github.com/user-attachments/assets/8dc3379d-f2a5-42b3-b203-1765fbbba99a)
 
-#Project-2 Handwritten Digit Recognition (MNIST)
-
-
+# Project-2 Handwritten Digit Recognition (MNIST)
 
 
 # Handwritten Digit Recognition using CNN (MNIST dataset)
@@ -94,12 +93,11 @@ model.fit(X_train, y_train, epochs=5, batch_size=64, validation_split=0.1, verbo
 # Evaluate on test data
 test_loss, test_acc = model.evaluate(X_test, y_test, verbose=2)
 print("\nTest Accuracy:", test_acc*100)
-Ouput: 
+# Ouput: 
 ![image](https://github.com/user-attachments/assets/fb13f3c6-e51d-48ca-acd6-6286203c0c03)
 
-Project -3  Loan Eligibility Predictor
+# Project -3  Loan Eligibility Predictor
 
-# Loan Eligibility Predictor
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -169,12 +167,12 @@ plt.legend(loc='lower right')
 plt.grid()
 plt.show()
 
-Output:
+# Output:
 
 ![image](https://github.com/user-attachments/assets/b4f4f866-4a8e-4108-8355-dafb272e286b)
 ![image](https://github.com/user-attachments/assets/88522ee3-928e-4cc8-8187-5d031e5792c2)
 
-Project-4:Fake News Detection (Using Scikit-learn Built-in Dataset)
+
 
 # Project 4: Fake News Detection (Using Scikit-learn Built-in Dataset)
 
@@ -213,11 +211,11 @@ print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
 
-Output:
+# Output:
 
 ![image](https://github.com/user-attachments/assets/b8025e83-0967-4283-a552-31f4b9ce7db0)
 
-Project-5 Movie recommendation System
+# Project-5 Movie recommendation System
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import LabelEncoder
@@ -258,13 +256,13 @@ recommend_movies = top_user_movies[~top_user_movies['movie'].isin(user_movies)]
 recommend_movies = recommend_movies.sort_values(by='rating', ascending=False)
 
 print("\nRecommended Movies for User", user_id, ":\n", recommend_movies[['movie', 'rating']])
-Output:
+# Output:
 
 ![image](https://github.com/user-attachments/assets/1bebd512-08dc-4127-8dca-dc1f4e749beb)
 ![image](https://github.com/user-attachments/assets/f91a2cb6-a855-44be-a7c3-d0136659e360)
 
-Project 6: Stock Price Prediction using LSTM 
-# Stock Price Prediction using LSTM 
+# Project 6: Stock Price Prediction using LSTM 
+
 
 import numpy as np
 import pandas as pd
@@ -332,15 +330,15 @@ plt.ylabel('Price')
 plt.legend()
 plt.show()
 
-Output:
+# Output:
 ![image](https://github.com/user-attachments/assets/e5ce4946-8f35-455c-8186-f62562ce666f)
 ![image](https://github.com/user-attachments/assets/a0bea1c4-6e95-42b3-bb84-d87b0d921f76)
 
 
 
-#Project-7
 
-PROJECT -7 Emotion Detection from Text
+
+# Project-7 Emotion Detection from Text
 
 
 import nltk
@@ -384,7 +382,67 @@ print("\nAccuracy:", accuracy_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
 
-#Output
-Output
+# OUTPUT
 
 ![image](https://github.com/user-attachments/assets/f51f7b80-2916-4347-aa5e-16d0eb6cb7a0)
+
+# PROJECT 8- Plant Disease Prediction 
+import tensorflow as tf
+import tensorflow_datasets as tfds
+import matplotlib.pyplot as plt
+
+# Step 1: Load PlantVillage dataset (38 classes)
+(ds_train, ds_val), ds_info = tfds.load(
+    'plant_village',
+    split=['train[:80%]', 'train[80%:]'],
+    with_info=True,
+    as_supervised=True,
+)
+
+# Step 2: Preprocessing
+IMG_SIZE = 128
+def preprocess(image, label):
+    image = tf.image.resize(image, [IMG_SIZE, IMG_SIZE])
+    image = tf.cast(image, tf.float32) / 255.0  # Normalize
+    return image, label
+
+ds_train = ds_train.map(preprocess).shuffle(1000).batch(32).prefetch(tf.data.AUTOTUNE)
+ds_val = ds_val.map(preprocess).batch(32).prefetch(tf.data.AUTOTUNE)
+
+# Step 3: Build CNN
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=[IMG_SIZE,IMG_SIZE,3]),
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(128, (3,3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(ds_info.features['label'].num_classes, activation='softmax')
+])
+
+# Step 4: Compile
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Step 5: Train
+history = model.fit(ds_train, validation_data=ds_val, epochs=5)
+
+# Step 6: Plot Accuracy
+plt.plot(history.history['accuracy'], label='train_acc')
+plt.plot(history.history['val_accuracy'], label='val_acc')
+plt.legend()
+plt.title('Training vs Validation Accuracy')
+plt.show()
+
+# Output
+![image](https://github.com/user-attachments/assets/d7783560-a422-458d-8a50-3ac61512c17b)
+
+![image](https://github.com/user-attachments/assets/a13852b8-be7b-48e5-a55a-75996248d8aa)
+
+
+
+
+
