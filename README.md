@@ -336,3 +336,47 @@ Output:
 ![image](https://github.com/user-attachments/assets/e5ce4946-8f35-455c-8186-f62562ce666f)
 ![image](https://github.com/user-attachments/assets/a0bea1c4-6e95-42b3-bb84-d87b0d921f76)
 
+
+#PROJECT -7 Emotion Detection from Text
+import nltk
+from nltk.corpus import twitter_samples
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+
+# Download NLTK Twitter Dataset
+nltk.download('twitter_samples')
+nltk.download('punkt')
+
+# Step 1: Load positive and negative tweets as sample emotional data
+pos_tweets = twitter_samples.strings('positive_tweets.json')
+neg_tweets = twitter_samples.strings('negative_tweets.json')
+
+# Step 2: Create DataFrame
+tweets = pd.DataFrame({'text': pos_tweets + neg_tweets, 
+                       'emotion': ['positive']*len(pos_tweets) + ['negative']*len(neg_tweets)})
+
+print("Sample Tweets:\n", tweets.head())
+
+# Step 3: TF-IDF Vectorization
+tfidf = TfidfVectorizer(stop_words='english', max_features=5000)
+X = tfidf.fit_transform(tweets['text'])
+y = tweets['emotion']
+
+# Step 4: Train/Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 5: Train Logistic Regression Model
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+
+# Step 6: Predict and Evaluate
+y_pred = model.predict(X_test)
+
+print("\nAccuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+#Output
+
+![image](https://github.com/user-attachments/assets/f51f7b80-2916-4347-aa5e-16d0eb6cb7a0)
