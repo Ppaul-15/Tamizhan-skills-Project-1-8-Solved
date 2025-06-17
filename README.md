@@ -337,7 +337,12 @@ Output:
 ![image](https://github.com/user-attachments/assets/a0bea1c4-6e95-42b3-bb84-d87b0d921f76)
 
 
-#PROJECT -7 Emotion Detection from Text
+
+#Project-7
+
+PROJECT -7 Emotion Detection from Text
+
+
 import nltk
 from nltk.corpus import twitter_samples
 import pandas as pd
@@ -377,6 +382,9 @@ y_pred = model.predict(X_test)
 
 print("\nAccuracy:", accuracy_score(y_test, y_pred))
 print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+
 #Output
+Output
 
 ![image](https://github.com/user-attachments/assets/f51f7b80-2916-4347-aa5e-16d0eb6cb7a0)
